@@ -28,6 +28,9 @@
 
 #define PH_SIGNAL_PIN             A0
 #define ORP_SIGNAL_PIN            A1
+#define SENSOR_SWITCH_PIN         6
+#define OFF LOW
+#define ON  HIGH
 #define REF_VOLTAGE               3300
 #define CALIBRATION_MODE_TIMEOUT  600   //seconds
 
@@ -448,7 +451,10 @@ private:
 
       ph = readPH();
 
+      digitalWrite(SENSOR_SWITCH_PIN, ON);
+      _delay_ms(100);
       orp = readORP();
+      digitalWrite(SENSOR_SWITCH_PIN, OFF);
 
       //Anzeige der Daten auf dem LCD Display
       lcd.showMeasureValues(currentTemperature, ph, orp);
@@ -480,6 +486,8 @@ private:
       Channel::setup(dev, number, addr);
       pinMode(PH_SIGNAL_PIN, INPUT);
       pinMode(ORP_SIGNAL_PIN, INPUT);
+      pinMode(SENSOR_SWITCH_PIN, OUTPUT);
+      digitalWrite(SENSOR_SWITCH_PIN, OFF);
       ds18b20_present = (Ds18b20::init(dsWire, ds18b20, 1) == 1);
       DPRINT(F("DS18B20: "));DPRINTLN( ds18b20_present == true ? "OK":"FAIL");
       sysclock.add(*this);
